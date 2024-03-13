@@ -1,0 +1,19 @@
+[
+	{	"id":1,
+		"nom": "ordi",
+		"prix": 125678.0,
+		"reference": "sl14"
+	},
+	{
+		"id":2,
+		"nom": "ordi",
+		"prix": 125678.0,
+		"reference": "isos1"
+	},
+	{
+		"id":3,
+		"nom": "ordi",
+		"prix": 125678.0,
+		"reference": "kls14"
+	}
+]

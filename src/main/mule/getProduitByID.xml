@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<flow name="getProduitByIDFlow" doc:id="30856aed-41a2-41e9-8c13-18e9858be261" >
+		<http:listener doc:name="Listener" doc:id="d95ac171-76d1-40ed-b601-d2b1482cf780" config-ref="HTTP_Listener_config" path="/{id}" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="End Logger" doc:id="64e041be-c708-4831-b9e7-bd37f1268f5e" message="Debut de l'operation de recuperation par id"/>
+		<ee:transform doc:name="Transform Message" doc:id="75f8c820-0be3-4e63-944d-d4795f3fd632" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://services.javaws.com/
+---
+{
+	ns0#getProduit: {
+		id: attributes.uriParams.id
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="getProduit" doc:name="Consume" doc:id="d420c925-765e-4664-9404-8c3088e2d336" config-ref="Web_Service_Consumer_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="246d2864-de69-43bd-bb7d-560b995acf08" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://services.javaws.com/
+---
+[{
+	id: payload.body.ns0#getProduitResponse.return.id default 0,
+	nom: payload.body.ns0#getProduitResponse.return.nom default "",
+	prix: payload.body.ns0#getProduitResponse.return.prix default 0,
+	reference: payload.body.ns0#getProduitResponse.return.reference default ""
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Logger" doc:id="0d7a5df3-1020-4e20-80a9-f70d2bd1e900" message="Fin de recuperation de produit par id"/>
+	</flow>
+</mule>

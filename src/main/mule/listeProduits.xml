@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2f87c8bd-51d1-4449-83ce-6618e9de9f6d" basePath="/apituto" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="01b40f74-1668-44ab-9ccd-74bbef9534b6" >
+		<wsc:connection wsdlLocation="wsdl\produits.wsdl" service="WSProduitService" port="ProduitWSPort" address="http://localhost:8081/services" />
+	</wsc:config>
+	<flow name="listeProduitsFlow" doc:id="e9da4499-1eb3-4ea4-976e-65cf5ebd3908" >
+		<http:listener doc:name="Listener" doc:id="847a5cb9-508d-4510-99e3-36d3bd38fcff" config-ref="HTTP_Listener_config" path="/lister" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Start Logger" doc:id="e7ece0c2-2476-4e99-9e4d-11082410fc2d" message="Debut de l'operation de liste de produits"/>
+		<wsc:consume operation="listProduit" doc:name="Consume" doc:id="7167eb93-03ad-440e-89c3-c7a0519d0858" config-ref="Web_Service_Consumer_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="b45990be-0e53-492e-b14a-de3611c50447" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://services.javaws.com/
+---
+payload.body.ns0#listProduitResponse.*return map ( return , indexOfReturn ) -> {
+	id: return.id default 0,
+	nom: return.nom default "",
+	prix: return.prix default 0,
+	reference: return.reference default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Logger" doc:id="8b061ea3-7238-40ee-a9f7-6b35d5928474" message="Fin de l'opération de liste de produits"/>
+	</flow>
+</mule>

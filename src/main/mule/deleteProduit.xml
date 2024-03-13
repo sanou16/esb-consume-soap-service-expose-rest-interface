@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<flow name="deleteProduitFlow" doc:id="8fbb21cc-35f1-405f-97f8-537f587e0e97" >
+		<http:listener doc:name="Listener" doc:id="e2f11465-659f-44c3-8979-a207f7390286" config-ref="HTTP_Listener_config" path="/delete/{id}" allowedMethods="DELETE"/>
+		<logger level="INFO" doc:name="Start Logger" doc:id="5e5bde5d-90e5-48b5-91e8-2c133b7538eb" message="Debut de l'operation de suppression"/>
+		<ee:transform doc:name="Transform Message" doc:id="92b8027c-c681-4cb5-b612-6fdceb216a0f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://services.javaws.com/
+---
+{
+	ns0#deleteProduit: {
+		id: attributes.uriParams.id
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="e59e8685-6dc9-4974-9fb3-b77edb07d3cc" config-ref="Web_Service_Consumer_Config" operation="deleteProduit"/>
+		<ee:transform doc:name="Transform Message" doc:id="838a90b6-9430-4dd1-b2aa-19e9487fc678" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://services.javaws.com/
+---
+[{
+	result: payload.body.ns0#deleteProduitResponse.return default true
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Logger" doc:id="3c0c15f2-c88a-4f86-8bc0-70c2ab0622db" message="Fin de l'operation de suppresion"/>
+	</flow>
+</mule>

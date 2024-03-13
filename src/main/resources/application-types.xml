@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="ResponseJson" format="json">
+      <types:shape format="weave" example="examples/addResponse.json"><![CDATA[%dw 2.0
+
+type ResponseJson = Array<{|  id: Number {"typeId": "int"},   nom: String,   prix: Number {"typeId": "double"},   reference: String|}> {"example": "[{\\\"id\\\":1,\\\"nom\\\":\\\"ordi\\\",\\\"prix\\\":125678.0,\\\"reference\\\":\\\"sl14\\\"},{\\\"id\\\":2,\\\"nom\\\":\\\"ordi\\\",\\\"prix\\\":125678.0,\\\"reference\\\":\\\"isos1\\\"},{\\\"id\\\":3,\\\"nom\\\":\\\"ordi\\\",\\\"prix\\\":125678.0,\\\"reference\\\":\\\"kls14\\\"}]"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="boolResponseJson" format="json">
+      <types:shape format="weave" example="examples/addResponse - Copie.json"><![CDATA[%dw 2.0
+
+type boolResponseJson = Array<{| result: Boolean |}> {"example": "[{\\\"result\\\":true}]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#b45990be-0e53-492e-b14a-de3611c50447">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="ResponseJson"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#38ff91b5-ba5b-4e03-95b3-8c95362b1795">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="boolResponseJson"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#d7e9be35-c052-42bf-89a3-55a02a9a71cf">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="boolResponseJson"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#838a90b6-9430-4dd1-b2aa-19e9487fc678">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="boolResponseJson"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#246d2864-de69-43bd-bb7d-560b995acf08">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="ResponseJson"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
